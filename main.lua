@@ -5,6 +5,10 @@
 local V3 = {}
 function V3.new(x,y,z)
     local self = {x=x,y=y,z=z}
+    function self:repr()
+        return self.x .. " " .. self.y .. " " .. self.z
+    end
+
     return self
 end
 
@@ -14,7 +18,7 @@ function Triangle.new(x1,y1,z1,x2,y2,z2,x3,y3,z3)
     -- 3 vectors
     self[1] = V3.new(x1,y1,z1)
     self[2] = V3.new(x2,y2,z2)
-    self[3] = V3.new(z3,y3,z3)
+    self[3] = V3.new(x3,y3,z3)
 
     function self:dup(o)
         self[1].x = o[1].x
@@ -26,6 +30,10 @@ function Triangle.new(x1,y1,z1,x2,y2,z2,x3,y3,z3)
         self[3].x = o[3].x
         self[3].y = o[3].y
         self[3].x = o[3].z
+    end
+
+    function self:repr()
+        return self[1]:repr() .. ", " .. self[2]:repr() .. ", " .. self[3]:repr()
     end
 
     return self
@@ -88,28 +96,28 @@ local projMatrix = nil
 function setup_mesh()
     mymesh = Mesh.new()
     -- south
-    mymesh:add(Triangle.new(0,0,0, 0,1,0, 1,1,0))
-    mymesh:add(Triangle.new(0,0,0, 1,1,0, 1,0,0))
+    -- mymesh:add(Triangle.new(0,0,0, 0,1,0, 1,1,0))
+    -- mymesh:add(Triangle.new(0,0,0, 1,1,0, 1,0,0))
     
     -- east
-    mymesh:add(Triangle.new(1,0,0, 1,1,0, 1,1,1))
-    mymesh:add(Triangle.new(1,0,0, 1,1,1, 1,0,1))
+    -- mymesh:add(Triangle.new(1,0,0, 1,1,0, 1,1,1))
+    -- mymesh:add(Triangle.new(1,0,0, 1,1,1, 1,0,1))
 
     -- north
     mymesh:add(Triangle.new(1,0,1, 1,1,1, 0,1,1))
     mymesh:add(Triangle.new(1,0,1, 0,1,1, 0,0,1))
 
     -- west
-    mymesh:add(Triangle.new(0,0,1, 0,1,1, 0,1,0))
-    mymesh:add(Triangle.new(0,0,1, 0,1,0, 0,0,0))
+    -- mymesh:add(Triangle.new(0,0,1, 0,1,1, 0,1,0))
+    -- mymesh:add(Triangle.new(0,0,1, 0,1,0, 0,0,0))
 
     -- top
-    mymesh:add(Triangle.new(0,1,0, 0,1,1, 1,1,1))
-    mymesh:add(Triangle.new(0,1,0, 1,1,1, 1,1,0))
+    -- mymesh:add(Triangle.new(0,1,0, 0,1,1, 1,1,1))
+    -- mymesh:add(Triangle.new(0,1,0, 1,1,1, 1,1,0))
 
     -- bottom
-    mymesh:add(Triangle.new(1,0,1, 0,0,1, 0,0,0))
-    mymesh:add(Triangle.new(1,0,1, 0,0,0, 1,0,0))
+    -- mymesh:add(Triangle.new(1,0,1, 0,0,1, 0,0,0))
+    -- mymesh:add(Triangle.new(1,0,1, 0,0,0, 1,0,0))
 end
 
 function love.load()
@@ -124,15 +132,16 @@ function love.draw()
 
     for i,v in ipairs(mymesh) do
         
+        -- print(v:repr())
         local triTran = Triangle.new(0,0,0,0,0,0,0,0,0)
         
         -- copy the source into triTran
         triTran:dup(v)
 
         -- translate it a bit
-        triTran[1].z = v[1].z + 0.1
-        triTran[2].z = v[2].z + 0.1
-        triTran[3].z = v[3].z + 0.1
+        triTran[1].z = v[1].z + 3.0
+        triTran[2].z = v[2].z + 3.0
+        triTran[3].z = v[3].z + 3.0
 
         local triProjected = Triangle.new(0,0,0,0,0,0,0,0,0)
         triProjected[1] = multMatrixVector(triTran[1], projMatrix)
