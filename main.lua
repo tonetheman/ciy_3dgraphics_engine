@@ -8,6 +8,9 @@ function V3.new(x,y,z)
     function self:repr()
         return self.x .. " " .. self.y .. " " .. self.z
     end
+    function self:equals(o)
+        return self.x == o.x and self.y == o.y and self.z == o.z
+    end
 
     return self
 end
@@ -23,17 +26,21 @@ function Triangle.new(x1,y1,z1,x2,y2,z2,x3,y3,z3)
     function self:dup(o)
         self[1].x = o[1].x
         self[1].y = o[1].y
-        self[1].x = o[1].z
+        self[1].z = o[1].z
         self[2].x = o[2].x
         self[2].y = o[2].y
-        self[2].x = o[2].z
+        self[2].z = o[2].z
         self[3].x = o[3].x
         self[3].y = o[3].y
-        self[3].x = o[3].z
+        self[3].z = o[3].z
     end
 
     function self:repr()
         return self[1]:repr() .. ", " .. self[2]:repr() .. ", " .. self[3]:repr()
+    end
+
+    function self:equals(o)
+        return self[1]:equals(o[1]) and self[2]:equals(o[2]) and self[3]:equals(o[3])
     end
 
     return self
@@ -96,28 +103,28 @@ local projMatrix = nil
 function setup_mesh()
     mymesh = Mesh.new()
     -- south
-    -- mymesh:add(Triangle.new(0,0,0, 0,1,0, 1,1,0))
-    -- mymesh:add(Triangle.new(0,0,0, 1,1,0, 1,0,0))
+    mymesh:add(Triangle.new(0,0,0, 0,1,0, 1,1,0))
+    mymesh:add(Triangle.new(0,0,0, 1,1,0, 1,0,0))
     
     -- east
-    -- mymesh:add(Triangle.new(1,0,0, 1,1,0, 1,1,1))
-    -- mymesh:add(Triangle.new(1,0,0, 1,1,1, 1,0,1))
+    mymesh:add(Triangle.new(1,0,0, 1,1,0, 1,1,1))
+    mymesh:add(Triangle.new(1,0,0, 1,1,1, 1,0,1))
 
     -- north
     mymesh:add(Triangle.new(1,0,1, 1,1,1, 0,1,1))
     mymesh:add(Triangle.new(1,0,1, 0,1,1, 0,0,1))
 
     -- west
-    -- mymesh:add(Triangle.new(0,0,1, 0,1,1, 0,1,0))
-    -- mymesh:add(Triangle.new(0,0,1, 0,1,0, 0,0,0))
+    mymesh:add(Triangle.new(0,0,1, 0,1,1, 0,1,0))
+    mymesh:add(Triangle.new(0,0,1, 0,1,0, 0,0,0))
 
     -- top
-    -- mymesh:add(Triangle.new(0,1,0, 0,1,1, 1,1,1))
-    -- mymesh:add(Triangle.new(0,1,0, 1,1,1, 1,1,0))
+    mymesh:add(Triangle.new(0,1,0, 0,1,1, 1,1,1))
+    mymesh:add(Triangle.new(0,1,0, 1,1,1, 1,1,0))
 
     -- bottom
-    -- mymesh:add(Triangle.new(1,0,1, 0,0,1, 0,0,0))
-    -- mymesh:add(Triangle.new(1,0,1, 0,0,0, 1,0,0))
+    mymesh:add(Triangle.new(1,0,1, 0,0,1, 0,0,0))
+    mymesh:add(Triangle.new(1,0,1, 0,0,0, 1,0,0))
 end
 
 function love.load()
@@ -138,10 +145,18 @@ function love.draw()
         -- copy the source into triTran
         triTran:dup(v)
 
+        -- if not triTran:equals(v) then
+        --    print("not equals")
+        --    print(triTran:repr() .. " -- " .. v:repr())
+        -- end
+
+        -- print(triTran:repr())
+        
         -- translate it a bit
-        triTran[1].z = v[1].z + 3.0
-        triTran[2].z = v[2].z + 3.0
-        triTran[3].z = v[3].z + 3.0
+        triTran[1].z = v[1].z + 0.1
+        triTran[2].z = v[2].z + 0.1
+        triTran[3].z = v[3].z + 0.1
+        -- print(triTran:repr())
 
         local triProjected = Triangle.new(0,0,0,0,0,0,0,0,0)
         triProjected[1] = multMatrixVector(triTran[1], projMatrix)
