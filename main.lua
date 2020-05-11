@@ -33,10 +33,10 @@ end
 local Matrix4x4 = {}
 function Matrix4x4.new()
     local self = {}
-    self[1] = { {0,0,0,0} }
-    self[2] = { {0,0,0,0} }
-    self[3] = { {0,0,0,0} }
-    self[4] = { {0,0,0,0} }
+    self[1] = {0,0,0,0}
+    self[2] = {0,0,0,0}
+    self[3] = {0,0,0,0} 
+    self[4] = {0,0,0,0}
 
     self[1][1] = gameData.aspect_ratio * gameData.fovRad
     self[2][2] = gameData.fovRad
@@ -50,6 +50,9 @@ end
 
 function multMatrixVector(i,m)
     local o = V3.new(0,0,0)
+
+    -- for debugging
+    -- print(m[1][1] .. " " .. m[2][1] .. " " .. m[3][1] .. " " .. m[4][1])
     o.x = i.x * m[1][1] + i.y * m[2][1] + i.z*m[3][1] + m[4][1]
     o.y = i.x * m[1][2] + i.y * m[2][2] + i.z*m[3][2] + m[4][2]
     o.x = i.x * m[1][3] + i.y * m[2][3] + i.z*m[3][3] + m[4][3]
