@@ -131,10 +131,10 @@ function love.draw()
         triProjected[2].x = triProjected[2].x * 0.5 * gameData.W
         triProjected[2].y = triProjected[2].y * 0.5 * gameData.H
         triProjected[3].x = triProjected[3].x * 0.5 * gameData.W
-        triProjected[4].y = triProjected[3].y * 0.5 * gameData.H
+        triProjected[3].y = triProjected[3].y * 0.5 * gameData.H
 
         
-        love.graphics.triangle("line", 
+        love.graphics.polygon("line", 
             triProjected[1].x, triProjected[1].y,
             triProjected[2].x, triProjected[2].y,
             triProjected[3].x, triProjected[3].y
