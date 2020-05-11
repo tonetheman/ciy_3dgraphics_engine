@@ -15,6 +15,19 @@ function Triangle.new(x1,y1,z1,x2,y2,z2,x3,y3,z3)
     self[1] = V3.new(x1,y1,z1)
     self[2] = V3.new(x2,y2,z2)
     self[3] = V3.new(z3,y3,z3)
+
+    function self:dup(o)
+        self[1].x = o[1].x
+        self[1].y = o[1].y
+        self[1].x = o[1].z
+        self[2].x = o[2].x
+        self[2].y = o[2].y
+        self[2].x = o[2].z
+        self[3].x = o[3].x
+        self[3].y = o[3].y
+        self[3].x = o[3].z
+    end
+
     return self
 end
 
@@ -102,8 +115,6 @@ end
 function love.load()
     setup_mesh()
     projMatrix = Matrix4x4.new()
-
-    print("gameData: " .. gameData.W)
 end
 
 function love.update(dt)
@@ -113,10 +124,20 @@ function love.draw()
 
     for i,v in ipairs(mymesh) do
         
+        local triTran = Triangle.new(0,0,0,0,0,0,0,0,0)
+        
+        -- copy the source into triTran
+        triTran:dup(v)
+
+        -- translate it a bit
+        triTran[1].z = v[1].z + 0.1
+        triTran[2].z = v[2].z + 0.1
+        triTran[3].z = v[3].z + 0.1
+
         local triProjected = Triangle.new(0,0,0,0,0,0,0,0,0)
-        triProjected[1] = multMatrixVector(v[1], projMatrix)
-        triProjected[2] = multMatrixVector(v[2], projMatrix)
-        triProjected[3] = multMatrixVector(v[3], projMatrix)
+        triProjected[1] = multMatrixVector(triTran[1], projMatrix)
+        triProjected[2] = multMatrixVector(triTran[2], projMatrix)
+        triProjected[3] = multMatrixVector(triTran[3], projMatrix)
 
         -- scale into view move point from 0,1 to 1,2
         triProjected[1].x = triProjected[1].x + 1
