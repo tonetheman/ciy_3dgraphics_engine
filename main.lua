@@ -135,6 +135,8 @@ end
 function love.update(dt)
 end
 
+-- local f = 0.1
+
 function love.draw()
 
     for i,v in ipairs(mymesh) do
@@ -145,17 +147,25 @@ function love.draw()
         -- copy the source into triTran
         triTran:dup(v)
 
-        -- if not triTran:equals(v) then
-        --    print("not equals")
-        --    print(triTran:repr() .. " -- " .. v:repr())
-        -- end
+        if not triTran:equals(v) then
+            print("not equals")
+            print(triTran:repr() .. " -- " .. v:repr())
+         end
 
         -- print(triTran:repr())
         
         -- translate it a bit
-        triTran[1].z = v[1].z + 0.1
-        triTran[2].z = v[2].z + 0.1
-        triTran[3].z = v[3].z + 0.1
+        --[[
+        triTran[1].z = triTran[1].z + f
+        triTran[2].z = triTran[2].z + f
+        triTran[3].z = triTran[3].z + f
+
+        f = f + 0.001
+        if f>3 then
+            f = 0
+        end
+
+        ]]
         -- print(triTran:repr())
 
         local triProjected = Triangle.new(0,0,0,0,0,0,0,0,0)
