@@ -8,6 +8,9 @@ function Vec3d.new(x,y,z)
         self.y = other.y
         self.z = other.z
     end
+    function self:repr()
+        return tostring(self.x) .. "," .. tostring(self.y) .. "," .. tostring(self.z)
+    end
     return self
 end
 Vec3d.ZERO = Vec3d.new(0,0,0)
@@ -89,10 +92,11 @@ end
 function MultiplyMatrixVector(i,m)
     local o = Vec3d.newZero()
     
-    o.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + m.m[3][0];
-    o.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + m.m[3][1];
-    o.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + m.m[3][2];
-    local w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + m.m[3][3];
+    print(i)
+    o.x = i.x * m.m[1][1] + i.y * m.m[2][1] + i.z * m.m[3][1] + m.m[4][1];
+    o.y = i.x * m.m[1][2] + i.y * m.m[2][2] + i.z * m.m[3][2] + m.m[4][2];
+    o.z = i.x * m.m[1][3] + i.y * m.m[2][3] + i.z * m.m[3][3] + m.m[4][3];
+    local w = i.x * m.m[1][4] + i.y * m.m[2][4] + i.z * m.m[3][4] + m.m[4][4];
 
     if w ~= 0.0 then
         o.x = o.x/w
@@ -105,8 +109,25 @@ end
 
 local mesh = Mesh.new()
 local fTheta = 0
+local matProj = Mat4x4.new()
 
 function love.load()
+    matProj.m[1][1] = gameData.fAspectRatio * gameData.fFovRad;
+    matProj.m[2][2] = gameData.fFovRad;
+    matProj.m[3][3] = gameData.fFar / (gameData.fFar - gameData.fNear);
+    matProj.m[4][3] = (-gameData.fFar * gameData.fNear) / (gameData.fFar - gameData.fNear);
+    matProj.m[3][4] = 1.0;
+    matProj.m[4][4] = 0.0;
+    
+    --[[
+        --verify data structure for mesh
+    for i,tri in ipairs(mesh.tris) do
+        print(tri)
+        for j=1,3 do
+            print("-- " .. tri.p[j]:repr())
+        end
+    end
+    ]]
 end
 
 function love.update(dt)
@@ -131,7 +152,7 @@ function love.draw()
 
     for i,tri in ipairs(mesh.tris) do
         
-        print(i)
+        -- print(i)
         local triRotatedZ = Triangle.new()
 
         -- rotate in Z axis
@@ -150,9 +171,9 @@ function love.draw()
         -- triTranslated = triRotatedZX;
         triTranslated:copyinto(triRotatedZX)
 
-        triTranslated.p[0].z = triRotatedZX.p[0].z + 3.0;
         triTranslated.p[1].z = triRotatedZX.p[1].z + 3.0;
         triTranslated.p[2].z = triRotatedZX.p[2].z + 3.0;
+        triTranslated.p[3].z = triRotatedZX.p[3].z + 3.0;
 
         -- project from 3d to 2d now!!!
         local triProjected = Triangle.new()
