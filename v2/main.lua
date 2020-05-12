@@ -12,10 +12,10 @@ end
 
 local Triangle = {}
 function Triangle()
-    local self = {}
-    self[1] = Vec3d.newZero()
-    self[2] = Vec3d.newZero()
-    self[3] = Vec3d.newZero()
+    local self = { p = {} }
+    self.p[1] = Vec3d.newZero()
+    self.p[2] = Vec3d.newZero()
+    self.p[3] = Vec3d.newZero()
     return self
 end
 
@@ -85,6 +85,9 @@ function love.load()
 end
 
 function love.draw()
-    for i,v in ipairs(mesh) do
+    for i,tri in ipairs(mesh) do
+        local triRotatedZ = Triangle.new()
+
+        -- MultiplyMatrixVector(tri.p[1], triRotatedZ[1], matRotZ)
     end
 end
