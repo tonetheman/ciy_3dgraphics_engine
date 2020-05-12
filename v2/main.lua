@@ -50,13 +50,17 @@ function Mesh.new()
     return self
 end
 
-local mat4x4 = { m = {
-    {0,0,0,0},
-    {0,0,0,0},
-    {0,0,0,0},
-    {0,0,0,0}
+local Mat4x4 = {}
+function Mat4x4.new()
+    local self = {  m = {
+        {0,0,0,0},
+        {0,0,0,0},
+        {0,0,0,0},
+        {0,0,0,0}
+        }
     }
-}
+    return self
+end
 
 --[[
     take an input vector - i
@@ -80,14 +84,32 @@ end
 
 
 local mesh = Mesh.new()
+local fTheta = 0
 
 function love.load()
 end
 
-function love.draw()
+function love.update(dt)
+    local matRotZ = Mat4x4.new()
+    matRotZ.m[1][1] = math.cos(fTheta)
+    matRotZ.m[1][2] = math.sin(fTheta);
+    matRotZ.m[2][1] = -math.sin(fTheta);
+    matRotZ.m[2][2] = math.cos(fTheta);
+    matRotZ.m[3][3] = 1;
+    matRotZ.m[4][4] = 1;
+
+    local matRotX = Mat4x4.new()
+    matRotX.m[2][2] = math.cos(fTheta * 0.5);
+    matRotX.m[2][3] = math.sin(fTheta * 0.5);
+    matRotX.m[3][2] = -math.sin(fTheta * 0.5);
+    matRotX.m[3][3] = math.cos(fTheta * 0.5);
+    matRotX.m[4][4] = 1;
+
     for i,tri in ipairs(mesh) do
         local triRotatedZ = Triangle.new()
 
-        -- MultiplyMatrixVector(tri.p[1], triRotatedZ[1], matRotZ)
+        triRotatedZ.p[1] = MultiplyMatrixVector(tri.p[1], matRotZ)
+        triRotatedZ.p[2] = MultiplyMatrixVector(tri.p[2], matRotZ);
+		triRotatedZ.p[3] = MultiplyMatrixVector(tri.p[3], matRotZ);
     end
 end
